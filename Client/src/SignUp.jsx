@@ -1,19 +1,26 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+
+const APIURL = 'http://localhost:3001';
 
 export default function SignUp() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-const navigate=useNavigate()
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post('http://mongodb+srv://emansibghatuaf:emandb@cluster0.murtd.mongodb.net/employee',{name, email, password }).then(result=>console.log(result))
-    navigate('./login')
-    .catch(error=>console.log(error));
-    
-    // Here you would typically send the data to your backend
+    try {
+      const response = await axios.post(`${APIURL}/register`, { name, email, password });
+      toast.success(response.data.message);
+      navigate('/login');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      toast.error(errorMessage);
+    }
   };
 
   return (
